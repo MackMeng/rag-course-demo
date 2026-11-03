@@ -1,0 +1,20 @@
+# Python 虚拟环境：体积大、与本机绑定，绝不能上传
+.venv/
+
+# 字节码缓存
+__pycache__/
+*.py[cod]
+
+# PyCharm IDE 配置
+.idea/
+
+# 会话历史：运行时产生的用户数据
+chat_history/
+
+# 向量库与 md5 去重状态：属于"由 data/ 重建"的派生产物
+# （若你希望别人 clone 后免重建、直接能跑问答，可删掉这两行）
+chroma_db/
+md5.text
+
+# 系统杂项
+.DS_Store
