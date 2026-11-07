@@ -7,10 +7,11 @@ import json
 import os
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import BaseMessage, messages_from_dict, message_to_dict
+import config_data as config
 
 def get_history(session_id):
     """获取指定会话id的历史对话记录"""
-    return FileChatMessageHistory(session_id,"./chat_history")
+    return FileChatMessageHistory(session_id,config.chat_history_dir)
 
 class FileChatMessageHistory(BaseChatMessageHistory):
     def __init__(self,session_id,storage_path):
@@ -36,7 +37,7 @@ class FileChatMessageHistory(BaseChatMessageHistory):
         try:
             with open(self.file_path,"r",encoding="utf-8") as f:
                 return messages_from_dict(json.load(f))
-        except FileNotFoundError:
+        except (FileNotFoundError, json.JSONDecodeError):
             return []
 
     def clear(self) -> None:

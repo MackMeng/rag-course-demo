@@ -32,44 +32,45 @@ class RagService(object):
         self.chain = self.__get_chain()
 
     def __get_chain(self):
-        """获取最终地执行链"""
+        """获取最终的执行链"""
         retriever = self.vector_service.get_retriever()     #检索器提供参考资料
         def format_documents(docs):
             if not docs:
                 return "无相关参考资料"
             formatted_str =""
             for doc in docs:
-                formatted_str += f"文档片段：{doc.page_content}\n文档元素据：{doc.metadata}\n\n"
+                formatted_str += f"文档片段：{doc.page_content}\n文档元数据：{doc.metadata}\n\n"
             return formatted_str
 
-        def temp1(data:dict) -> str:
+        def extract_query(data: dict) -> str:
+            """从上游输入字典中提取用户原始问题，用于交给检索器"""
             return data["input"]
 
-        def temp2(data: dict):
-            new_data={}
-            new_data["input"]=data["input"]["input"]
-            new_data["history"]=data["input"]["history"]
-            new_data["context"]=data["context"]
+        def normalize_inputs(data: dict):
+            """将上游多个并行输入合并为提示模板所需的平铺字段"""
+            new_data = {}
+            new_data["input"] = data["input"]["input"]
+            new_data["history"] = data["input"]["history"]
+            new_data["context"] = data["context"]
             return new_data
 
         chain = (
                     {
-                        "input":RunnablePassthrough(),
-                        "context":RunnableLambda(temp1)|retriever|format_documents
+                        "input": RunnablePassthrough(),
+                        "context": RunnableLambda(extract_query) | retriever | format_documents
                     }
-                )| RunnableLambda(temp2) | self.prompt_template  | print_prompt | self.chat_model  | StrOutputParser()
+                ) | RunnableLambda(normalize_inputs) | self.prompt_template | print_prompt | self.chat_model | StrOutputParser()
 
-        #增强历史会话保存功能
-        Conservation_chain=RunnableWithMessageHistory(
+        # 增强历史会话保存功能
+        conversation_chain = RunnableWithMessageHistory(
             chain,
             get_history,
             input_messages_key="input",
             history_messages_key="history",
         )
-        return Conservation_chain
+        return conversation_chain
 
 if __name__ == "__main__":
-    session_config={"configurable":{"session_id":"user_001"}}
-    res=RagService().chain.invoke({"input":"春天适合穿什么衣服"},session_config)
+    res = RagService().chain.invoke({"input": "春天适合穿什么衣服"}, config.session_config)
     print(res)
 

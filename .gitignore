@@ -18,3 +18,6 @@ md5.text
 
 # 系统杂项
 .DS_Store
+
+# 环境变量真实配置：只提交 .env.example 模板，绝不上报 .env
+.env

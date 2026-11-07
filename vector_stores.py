@@ -22,6 +22,6 @@ class VectorStoreService(object):
 
 if __name__=='__main__':
     from langchain_community.embeddings import DashScopeEmbeddings
-    retriever = VectorStoreService(DashScopeEmbeddings(model='text-embedding-v4')).get_retriever()
+    retriever = VectorStoreService(DashScopeEmbeddings(model=config.embedding_model)).get_retriever()
     res=retriever.invoke("我的身高180cm，体重80kg，尺码推荐")
     print(res[0].page_content)

@@ -1,0 +1,15 @@
+# RAG项目依赖清单（版本与开发环境 .venv 一致，Python 3.13）
+# 安装：pip install -r requirements.txt
+
+# Web 界面
+streamlit==1.66.1
+
+# LangChain 生态
+langchain-core==1.7.3
+langchain-community==0.4.2        # DashScopeEmbeddings / ChatTongyi
+langchain-chroma==1.1.0           # Chroma 向量存储
+langchain-text-splitters==1.1.3   # 文本切分器
+
+# 向量数据库与模型 SDK
+chromadb==1.5.9
+dashscope==2.0.2
